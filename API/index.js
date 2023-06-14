@@ -56,7 +56,7 @@ app.post("/login", async (req, res) => {
         if(err) throw err;
         // respond with cookie, first parametre is name of the cookie
         // second parametre is the value of the token
-        res.cookie("token", token).json("correct")
+        res.cookie("token", token).json(userDoc);
       });
     } else {
       res.status(422).json("not correct")
