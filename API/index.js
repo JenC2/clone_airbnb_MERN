@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User.js");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const app = express();
@@ -12,6 +13,7 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = "dflkjfs"
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
@@ -52,7 +54,10 @@ app.post("/login", async (req, res) => {
     const passwordCheck = bcrypt.compareSync(password, userDoc.password)
     if (passwordCheck) {
       // generate the token
-      jwt.sign({email: userDoc.email, id: userDoc._id}, jwtSecret, {}, (err, token) => {
+      jwt.sign({
+        email: userDoc.email, 
+        id: userDoc._id, 
+      }, jwtSecret, {}, (err, token) => {
         if(err) throw err;
         // respond with cookie, first parametre is name of the cookie
         // second parametre is the value of the token
@@ -65,5 +70,20 @@ app.post("/login", async (req, res) => {
     res.json("not found");
   }
 });
+
+app.get('/profile', (req, res) => {
+  const {token} = req.cookies;
+  // verify te token
+  if(token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if(err) throw err;
+      // Because with token we only got the information about e-mail and _id, but we will like to get the name for use, so we use mongoose function findById
+      const {name, email, _id} = await User.findById(userData.id)
+      res.json({name, email, _id});
+    });
+  } else{
+    res.json(null);
+  }
+})
 
 app.listen(8000);

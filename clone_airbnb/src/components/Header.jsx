@@ -1,8 +1,10 @@
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../UserContext";
 
 export default function Header() {
-  // const {user}
+  const { user } = useContext(UserContext);
   return (
     <div>
       <header className="p-8 flex justify-between">
@@ -65,6 +67,7 @@ export default function Header() {
               />
             </svg>
           </div>
+          {Boolean(user) ? <div>{user.name}</div> : null}
         </Link>
       </header>
     </div>
