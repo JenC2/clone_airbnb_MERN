@@ -7,7 +7,7 @@ export default function Header() {
   const { user } = useContext(UserContext);
   return (
     <div>
-      <header className="p-8 flex justify-between">
+      <header className="flex justify-between">
         <Link to={"/"} className="flex items-center gap-1">
           <img src={logo} />
           <span className="font-bold text-xl text-mainRed">airbnb</span>
