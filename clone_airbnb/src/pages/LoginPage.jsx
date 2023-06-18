@@ -12,6 +12,12 @@ export default function LoginPage() {
 
   async function handleLogin(e) {
     e.preventDefault();
+
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
     try {
       const { data } = await axios.post("/login", { email, password });
       setUser(data);
