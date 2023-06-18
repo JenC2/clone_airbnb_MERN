@@ -71,7 +71,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get('/profile', (req, res) => {
+app.get("/profile", (req, res) => {
   const {token} = req.cookies;
   // verify te token
   if(token) {
@@ -84,6 +84,10 @@ app.get('/profile', (req, res) => {
   } else{
     res.json(null);
   }
+})
+
+app.post("/logout", (req, res) => {
+  res.cookie("token", "").json(true);
 })
 
 app.listen(8000);
