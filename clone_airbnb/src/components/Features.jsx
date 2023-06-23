@@ -4,7 +4,7 @@ import tvIcon from "../assets/svg/tvIcon.svg";
 import poolIcon from "../assets/svg/poolIcon.svg";
 import kitchenIcon from "../assets/svg/kitchenIcon.svg";
 
-export default function Features() {
+export default function Features({selected, onChange}) {
   return (
     <>
       <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
