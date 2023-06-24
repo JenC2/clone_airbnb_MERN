@@ -35,6 +35,25 @@ export default function NewPlaces() {
     });
     setPhotoLink("");
   }
+
+  const addPhotoByDevice = async (e) => {
+    try {
+      const files = e.target.files;
+      const data = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        data.append("photos", files[i]);
+      }
+      const { data: fileNames } = await axios.post("/upload", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setUploadedPhotos(prev => {
+        return [...prev, ...fileNames];
+      });
+    } catch (error) {
+      console.error("Error occurred during file upload:", error);
+      // Handle the error, show an error message, or perform any necessary actions.
+    }
+  };
   
   return (
     <div>
@@ -53,14 +72,15 @@ export default function NewPlaces() {
         </div>
         <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {uploadedPhotos.length > 0 ? uploadedPhotos.map(link => (
-            <div>
-              <img className="rounded-2xl"  src={"http://localhost:8000/uploads/" + link} alt="" />
+            <div className="h-36 flex">
+              <img className="rounded-2xl w-full object-cover " src={"http://localhost:8000/uploads/" + link} alt="" />
             </div>
           )) : null}
-          <button className="flex border items-center rounded-2xl p-10 text-xl text-gray-500 gap-2">
+          <label className="h-36 cursor-pointer flex border items-center rounded-2xl p-10 text-xl text-gray-500 gap-2">
+            <input type="file" multiple className="hidden" onChange={addPhotoByDevice} />
             <img src={uploadIcon} alt="upload icon" className="w-8 h-8"/>
             Add Photos
-          </button>
+          </label>
         </div>
 
         {renderForm("Description", " Provide a detailed description of your place. Highlight its unique features, amenities, and any additional information that can help potential guests understand what makes your place special.")}
