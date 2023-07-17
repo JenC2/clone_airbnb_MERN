@@ -18,28 +18,26 @@ export default function NewPlaces() {
   const [extraInfo, setExtraInfo] = useState("");
   const [redirect, setRedirect] = useState("");
 
-  const renderForm = (title, description) => {
+  function renderForm(title, description) {
     return (
       <>
         <h2 className="text-xl mt-4">{title}</h2>
         <p className="text-gray-500 text-sm">{description}</p>
       </>
     );
-  };
+  }
 
-  const addPhotoByLink = async (e) => {
+  async function addPhotoByLink(e) {
     e.preventDefault();
     // {link: photoLink}) "link" is the name that we gonna send to data, "photoLink" is the state
     const { data: fileName } = await axios.post("/upload-by-link", {
       link: photoLink,
     });
-    setUploadedPhotos((ev) => {
-      return [...ev, fileName];
-    });
+    setUploadedPhotos((ev) => [...ev, fileName]);
     setPhotoLink("");
-  };
+  }
 
-  const addPhotoByDevice = async (e) => {
+  async function addPhotoByDevice(e) {
     try {
       const files = e.target.files;
       const data = new FormData();
@@ -49,16 +47,14 @@ export default function NewPlaces() {
       const { data: fileNames } = await axios.post("/upload", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setUploadedPhotos((prev) => {
-        return [...prev, ...fileNames];
-      });
+      setUploadedPhotos((prev) => [...prev, ...fileNames]);
     } catch (error) {
       console.error("Error occurred during file upload:", error);
       // Handle the error, show an error message, or perform any necessary actions.
     }
-  };
+  }
 
-  const addNewPlace = async (ev) => {
+  async function addNewPlace(ev) {
     ev.preventDefault();
     const placeData = {
       title,
@@ -74,7 +70,7 @@ export default function NewPlaces() {
     };
     await axios.post("/places", placeData);
     setRedirect("/account/places");
-  };
+  }
 
   if (redirect) {
     return <Navigate to={redirect} />;

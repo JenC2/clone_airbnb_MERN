@@ -29,9 +29,17 @@ export default function Header() {
           to={user ? "/account" : "/login"}
           className="flex border border-grey-300 rounded-full py-2 px-4 gap-3"
         >
-          <img src={menuLineIcon} alt="menuLineIcon" className="w-6 h-6 relative top-1" />
+          <img
+            src={menuLineIcon}
+            alt="menuLineIcon"
+            className="w-6 h-6 relative top-1"
+          />
           <div className="bg-gray-500 rounded-full p-1">
-            <img src={userIcon} alt="userIcon" className="w-6 h-6 relative top-1" />
+            <img
+              src={userIcon}
+              alt="userIcon"
+              className="w-6 h-6 relative top-1"
+            />
           </div>
           {Boolean(user) ? <div>{user.name}</div> : null}
         </Link>

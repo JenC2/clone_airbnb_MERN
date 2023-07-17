@@ -4,14 +4,14 @@ import tvIcon from "../assets/svg/tvIcon.svg";
 import poolIcon from "../assets/svg/poolIcon.svg";
 import kitchenIcon from "../assets/svg/kitchenIcon.svg";
 
-export default function Features({selected, onChange}) {
-  const handleCheckbox = (ev) => {
-    const {checked, name} = ev.target;
+const Features = ({ selected, onChange }) => {
+  function handleCheckbox(ev) {
+    const { checked, name } = ev.target;
     // console.log(ev.target.name);
     if (checked) {
       onChange([...selected, name]);
     } else {
-      onChange([...selected.filter(selectedName => selectedName !== name)])
+      onChange([...selected.filter((selectedName) => selectedName !== name)]);
     }
   }
   return (
@@ -43,4 +43,5 @@ export default function Features({selected, onChange}) {
       </label>
     </>
   );
-}
+};
+export default Features;
