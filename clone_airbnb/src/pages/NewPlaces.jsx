@@ -136,6 +136,8 @@ export default function NewPlaces() {
         <textarea
           value={extraInfo}
           onChange={(e) => setExtraInfo(e.target.value)}
+          cols="20"
+          rows="10"
         />
         <button className="buttonRed my-4">Save</button>
       </form>
