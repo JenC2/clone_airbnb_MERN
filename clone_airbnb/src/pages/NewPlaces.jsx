@@ -1,15 +1,14 @@
 import Features from "../components/Features";
 import MyAccomodations from "../components/MyAccomodations";
-import uploadIcon from "../assets/svg/uploadIcon.svg";
 import { useState } from "react";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
+import PhotosUploader from "../components/PhotosUploader";
 
 export default function NewPlaces() {
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
-  const [photoLink, setPhotoLink] = useState("");
   const [description, setDescription] = useState("");
   const [features, setFeatures] = useState([]);
   const [checkIn, setCheckIn] = useState("");
@@ -27,40 +26,12 @@ export default function NewPlaces() {
     );
   }
 
-  async function addPhotoByLink(e) {
-    e.preventDefault();
-    // {link: photoLink}) "link" is the name that we gonna send to data, "photoLink" is the state
-    const { data: fileName } = await axios.post("/upload-by-link", {
-      link: photoLink,
-    });
-    setUploadedPhotos((ev) => [...ev, fileName]);
-    setPhotoLink("");
-  }
-
-  async function addPhotoByDevice(e) {
-    try {
-      const files = e.target.files;
-      const data = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        data.append("photos", files[i]);
-      }
-      const { data: fileNames } = await axios.post("/upload", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setUploadedPhotos((prev) => [...prev, ...fileNames]);
-    } catch (error) {
-      console.error("Error occurred during file upload:", error);
-      // Handle the error, show an error message, or perform any necessary actions.
-    }
-  }
-
   async function addNewPlace(ev) {
     ev.preventDefault();
     const placeData = {
       title,
       address,
       uploadedPhotos,
-      photoLink,
       description,
       features,
       checkIn,
@@ -104,46 +75,10 @@ export default function NewPlaces() {
 
         {renderForm(
           "Photos",
-          "Upload high-quality photos of your property (JPEG or PNG format) to showcase its features and attract potential renters. <br />You can add up to 5 photos."
+          "Upload high-quality photos of your property (JPEG or PNG format) to showcase its features and attract potential renters. You can add up to 5 photos."
         )}
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={photoLink}
-            onChange={(e) => setPhotoLink(e.target.value)}
-            placeholder="Add photos using link ....jpg"
-          />
-          <button
-            onClick={addPhotoByLink}
-            className="bg-gray-200 px-4 rounded-xl"
-          >
-            Upload
-          </button>
-        </div>
-        <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {uploadedPhotos.length > 0
-            ? uploadedPhotos.map((link) => (
-                <div className="h-36 flex" key={link}>
-                  <img
-                    className="rounded-2xl w-full object-cover "
-                    src={"http://localhost:8000/uploads/" + link}
-                    alt=""
-                  />
-                </div>
-              ))
-            : null}
-          <label className="h-36 cursor-pointer flex border items-center rounded-2xl p-10 text-xl text-gray-500 gap-2">
-            <input
-              type="file"
-              multiple
-              className="hidden"
-              onChange={addPhotoByDevice}
-            />
-            <img src={uploadIcon} alt="upload icon" className="w-8 h-8" />
-            Add Photos
-          </label>
-        </div>
-
+        <PhotosUploader uploadedPhotos={uploadedPhotos} onChange={setUploadedPhotos} />
+       
         {renderForm(
           "Description",
           " Provide a detailed description of your place. Highlight its unique features, amenities, and any additional information that can help potential guests understand what makes your place special."
