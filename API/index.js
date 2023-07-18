@@ -138,4 +138,17 @@ app.post("/places", (req, res) => {
   });
 });
 
+app.get("/places", (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    const {id} = userData;
+    res.json(await Place.find({owner:id}));
+  });
+});
+
+app.get("/places/:id", async (req, res) => {
+  const {id} = req.params;
+  res.json(await Place.findById(id));
+});
+
 app.listen(8000);
