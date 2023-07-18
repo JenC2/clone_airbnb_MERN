@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User.js");
-const Place = require("./models/Place.js")
+const Place = require("./models/Place.js");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
 const multer = require("multer");
@@ -101,38 +101,38 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/upload-by-link", async (req, res) => {
-  const {link} = req.body;
+  const { link } = req.body;
   // rename the image
-  const newName = "photo" + Date.now() +'.jpg';
+  const newName = "photo" + Date.now() + ".jpg";
   await imageDownloader.image({
     url: link,
     dest: __dirname + "/uploads/" + newName,
   });
   res.json(newName);
-})
+});
 
-const photoMiddleware = multer({dest: "uploads"})
+const photoMiddleware = multer({ dest: "uploads" });
 app.post("/upload", photoMiddleware.array("photos", 50), (req, res) => {
   const uploadedFiles = [];
   for (let i = 0; i < req.files.length; i++) {
-    const {path, filename} = req.files[i];
+    const { path, filename } = req.files[i];
     uploadedFiles.push(filename);
   }
   res.json(uploadedFiles);
   console.log(uploadedFiles);
-})
+});
 
 app.post("/places", (req, res) => {
   const { token } = req.cookies;
-  const {title, address, photos, description, 
-  features, checkIn, checkOut, maxGuests, extraInfo} = req.body;
+  const {
+    title, address, uploadedPhotos, description, features,
+    checkIn, checkOut, maxGuests, extraInfo,
+  } = req.body;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) throw err;
     const placeInfo = await Place.create({
-      owner: userData.id,
-      title, address, photos, description,
-      features, extraInfo, checkIn, checkOut,
-      maxGuests
+      owner: userData.id, title, address, photos: uploadedPhotos,
+      description, features, extraInfo, checkIn, checkOut, maxGuests,
     });
     res.json(placeInfo);
   });
@@ -141,14 +141,34 @@ app.post("/places", (req, res) => {
 app.get("/places", (req, res) => {
   const { token } = req.cookies;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    const {id} = userData;
-    res.json(await Place.find({owner:id}));
+    const { id } = userData;
+    res.json(await Place.find({ owner: id }));
   });
 });
 
 app.get("/places/:id", async (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
   res.json(await Place.findById(id));
+});
+
+app.put("/places", async (req, res) => {
+  const { token } = req.cookies;
+  const {
+    id, title, address, uploadedPhotos, description, features,
+    checkIn, checkOut, maxGuests, extraInfo,
+  } = req.body;
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    const placeDoc = await Place.findById(id);
+    if (userData.id === placeDoc.owner.toString()) {
+      if (err) throw err;
+      placeDoc.set({
+        title, address, photos: uploadedPhotos, description,
+        features, extraInfo, checkIn, checkOut, maxGuests,
+      });
+      await placeDoc.save();
+      res.json("modified");
+    }
+  });
 });
 
 app.listen(8000);

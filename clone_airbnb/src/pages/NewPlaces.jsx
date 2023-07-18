@@ -1,11 +1,12 @@
 import Features from "../components/Features";
 import MyAccomodations from "../components/MyAccomodations";
-import { useState } from "react";
-import axios from "axios";
-import { Navigate } from "react-router-dom";
 import PhotosUploader from "../components/PhotosUploader";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Navigate, useParams } from "react-router-dom";
 
 export default function NewPlaces() {
+  const {id} = useParams();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
@@ -17,6 +18,24 @@ export default function NewPlaces() {
   const [extraInfo, setExtraInfo] = useState("");
   const [redirect, setRedirect] = useState("");
 
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    axios.get("/places/"+id).then(response => {
+      const {data} = response;
+      setTitle(data.title);
+      setAddress(data.address);
+      setUploadedPhotos(data.photos);
+      setDescription(data.description);
+      setFeatures(data.features);
+      setCheckIn(data.checkIn);
+      setCheckOut(data.checkOut);
+      setMaxGuests(data.maxGuests);
+      setExtraInfo(data.extraInfo);
+    });
+  }, [id]);
+
   function renderForm(title, description) {
     return (
       <>
@@ -26,7 +45,7 @@ export default function NewPlaces() {
     );
   }
 
-  async function addNewPlace(ev) {
+  async function savePlace(ev) {
     ev.preventDefault();
     const placeData = {
       title,
@@ -39,9 +58,15 @@ export default function NewPlaces() {
       maxGuests,
       extraInfo,
     };
-    await axios.post("/places", placeData);
-    setRedirect("/account/places");
+    if (id) {
+      await axios.put("/places", {id, ...placeData});
+      setRedirect("/account/places");
+    } else {
+      await axios.post("/places", placeData);
+      setRedirect("/account/places");
+    }
   }
+
 
   if (redirect) {
     return <Navigate to={redirect} />;
@@ -50,7 +75,7 @@ export default function NewPlaces() {
   return (
     <div>
       <MyAccomodations />
-      <form onSubmit={addNewPlace}>
+      <form onSubmit={savePlace}>
         {renderForm(
           "Title",
           'Enter a catchy and descriptive title for your property (e.g., "Stunning Beachfront Villa with Private Pool")'
@@ -78,7 +103,7 @@ export default function NewPlaces() {
           "Upload high-quality photos of your property (JPEG or PNG format) to showcase its features and attract potential renters. You can add up to 5 photos."
         )}
         <PhotosUploader uploadedPhotos={uploadedPhotos} onChange={setUploadedPhotos} />
-       
+
         {renderForm(
           "Description",
           " Provide a detailed description of your place. Highlight its unique features, amenities, and any additional information that can help potential guests understand what makes your place special."
