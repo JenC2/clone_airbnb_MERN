@@ -1,12 +1,19 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link, Navigate } from "react-router-dom";
 import MyAccomodations from "../components/MyAccomodations";
 import plusIcon from "../assets/svg/plusIcon.svg";
-
+import axios from "axios";
 
 export default function AccountPlacePage() {
+  const [places, setPlaces] = useState([]);
   const { ready, user } = useContext(UserContext);
+
+  useEffect(() => {
+    axios.get("places").then(({ data }) => {
+      setPlaces(data);
+    });
+  }, []);
 
   if (!ready) {
     return "Loading...";
@@ -29,6 +36,21 @@ export default function AccountPlacePage() {
             Add new place
           </Link>
         </div>
+      </div>
+      <div className="mt-4">
+        {places.length > 0 && places.map(place => (
+          <Link to={"/account/places/"+place._id} className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl">
+            <div className="w-32 h-32 bg-gray-200 shrink-0">
+              {place.photos.length > 0 && (
+                <img src={place.photos[0]} alt="photo of the place"/>
+              )}
+            </div>
+            <div>
+            <h2 className="text-xl">{place.title}</h2>
+            <p className="test-sm mt-2">{place.description}</p>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );
