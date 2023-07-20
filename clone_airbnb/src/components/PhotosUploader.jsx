@@ -2,6 +2,8 @@ import { useState } from "react";
 import uploadIcon from "../assets/svg/uploadIcon.svg";
 import axios from "axios";
 import trashIcon from "../assets/svg/trashIcon.svg";
+import starIcon from "../assets/svg/starIcon.svg";
+import fullStarIcon from "../assets/svg/fullStarIcon.svg";
 
 export default function PhotosUploader({ uploadedPhotos, onChange }) {
   const [photoLink, setPhotoLink] = useState("");
@@ -38,7 +40,12 @@ export default function PhotosUploader({ uploadedPhotos, onChange }) {
 
   function removePhoto(ev, filename) {
     ev.preventDefault();
-    onChange([...uploadedPhotos.filter((photo) => photo != filename)]);
+    onChange([...uploadedPhotos.filter((photo) => photo !== filename)]);
+  }
+
+  function selectCover(ev, filename) {
+    ev.preventDefault();
+    onChange([filename, ...uploadedPhotos.filter(photo => photo !== filename)]);
   }
 
   return (
@@ -71,6 +78,15 @@ export default function PhotosUploader({ uploadedPhotos, onChange }) {
                   className="cursor-pointer absolute bottom-1 right-1 bg-black bg-opacity-40 rounded-xl p-1"
                 >
                   <img src={trashIcon} alt="trash icon" className="w-8 h-8" />
+                </button>
+                <button                  
+                  onClick={(ev) => selectCover(ev, link)}
+                  className="cursor-pointer absolute bottom-1 left-1 bg-black bg-opacity-40 rounded-xl p-1"
+                >
+                  {link === uploadedPhotos[0] ?
+                    <img src={fullStarIcon} alt="fullStar icon" className="w-8 h-8" />:
+                    <img src={starIcon} alt="star icon" className="w-8 h-8" /> 
+                  }
                 </button>
               </div>
             ))
