@@ -6,7 +6,7 @@ import axios from "axios";
 import { Navigate, useParams } from "react-router-dom";
 
 export default function NewPlaces() {
-  const {id} = useParams();
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
@@ -16,14 +16,15 @@ export default function NewPlaces() {
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
   const [extraInfo, setExtraInfo] = useState("");
+  const [price, setPrice] = useState(100);
   const [redirect, setRedirect] = useState("");
 
   useEffect(() => {
     if (!id) {
       return;
     }
-    axios.get("/places/"+id).then(response => {
-      const {data} = response;
+    axios.get("/places/" + id).then((response) => {
+      const { data } = response;
       setTitle(data.title);
       setAddress(data.address);
       setUploadedPhotos(data.photos);
@@ -33,6 +34,7 @@ export default function NewPlaces() {
       setCheckOut(data.checkOut);
       setMaxGuests(data.maxGuests);
       setExtraInfo(data.extraInfo);
+      setPrice(data.price);
     });
   }, [id]);
 
@@ -57,16 +59,16 @@ export default function NewPlaces() {
       checkOut,
       maxGuests,
       extraInfo,
+      price,
     };
     if (id) {
-      await axios.put("/places", {id, ...placeData});
+      await axios.put("/places", { id, ...placeData });
       setRedirect("/account/places");
     } else {
       await axios.post("/places", placeData);
       setRedirect("/account/places");
     }
   }
-
 
   if (redirect) {
     return <Navigate to={redirect} />;
@@ -102,7 +104,10 @@ export default function NewPlaces() {
           "Photos",
           "Upload high-quality photos of your property (JPEG or PNG format) to showcase its features and attract potential renters. You can add up to 5 photos."
         )}
-        <PhotosUploader uploadedPhotos={uploadedPhotos} onChange={setUploadedPhotos} />
+        <PhotosUploader
+          uploadedPhotos={uploadedPhotos}
+          onChange={setUploadedPhotos}
+        />
 
         {renderForm(
           "Description",
@@ -124,7 +129,7 @@ export default function NewPlaces() {
           "Check-in & Check-out times",
           "Specify the check-in and check-out times for your guests and the maximum number of guests allowed to stay at your place."
         )}
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid gap-2 sm:grid-cols-2 md:gird-cols-4">
           <div>
             <h3 className="mt-2">Check-in time</h3>
             <input
@@ -150,6 +155,15 @@ export default function NewPlaces() {
               value={maxGuests}
               onChange={(e) => setMaxGuests(e.target.value)}
               placeholder="ex. 4"
+            />
+          </div>
+          <div>
+            <h3 className="mt-2">Price per night</h3>
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="100"
             />
           </div>
         </div>

@@ -126,13 +126,13 @@ app.post("/places", (req, res) => {
   const { token } = req.cookies;
   const {
     title, address, uploadedPhotos, description, features,
-    checkIn, checkOut, maxGuests, extraInfo,
+    checkIn, checkOut, maxGuests, price, extraInfo,
   } = req.body;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) throw err;
     const placeInfo = await Place.create({
       owner: userData.id, title, address, photos: uploadedPhotos,
-      description, features, extraInfo, checkIn, checkOut, maxGuests,
+      description, features, extraInfo, checkIn, checkOut, maxGuests, price,
     });
     res.json(placeInfo);
   });
@@ -155,7 +155,7 @@ app.put("/places", async (req, res) => {
   const { token } = req.cookies;
   const {
     id, title, address, uploadedPhotos, description, features,
-    checkIn, checkOut, maxGuests, extraInfo,
+    checkIn, checkOut, maxGuests, extraInfo, price,
   } = req.body;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     const placeDoc = await Place.findById(id);
@@ -163,7 +163,7 @@ app.put("/places", async (req, res) => {
       if (err) throw err;
       placeDoc.set({
         title, address, photos: uploadedPhotos, description,
-        features, extraInfo, checkIn, checkOut, maxGuests,
+        features, extraInfo, checkIn, checkOut, maxGuests, price,
       });
       await placeDoc.save();
       res.json("modified");
