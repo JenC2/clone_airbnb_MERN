@@ -171,4 +171,8 @@ app.put("/places", async (req, res) => {
   });
 });
 
+app.get("/all_places", async (req, res) => {
+  res.json(await Place.find());
+})
+
 app.listen(8000);
