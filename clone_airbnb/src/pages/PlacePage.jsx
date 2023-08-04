@@ -5,6 +5,7 @@ import menuIcon from "../assets/svg/menuIcon.svg";
 import closeIcon from "../assets/svg/closeIcon.svg";
 import mapIcon from "../assets/svg/mapIcon.svg";
 import BookingWidget from "../components/BookingWidget";
+import DisplayFeatures from "../components/DisplayFeatures";
 
 export default function PlacePage() {
   const { id } = useParams();
@@ -104,20 +105,26 @@ export default function PlacePage() {
         <div className="mt-8 grid gap-8 gird-cols-1 md:grid-cols-[2fr_1fr]">
           <div>
             <div className="my-4">
-              <h2 className="font-semibold text-xl">Description</h2>
+              <h2 className="mb-3 font-semibold text-xl">Description</h2>
               {place.description}
             </div>
-            Check-in: {place.checkIn}
-            <br />
-            Check-out: {place.checkOut}
-            <br />
-            Max number of guests: {place.maxGuests}
+            <div className="w-5/6 border-t -mx-8 mt-8 p-8">
+              <h2 className="mb-3 font-semibold text-xl">What this place offers</h2>
+              <DisplayFeatures features={place.features} />
+              <div>
+                Check-in: {place.checkIn}
+                <br />
+                Check-out: {place.checkOut}
+                <br />
+                Max number of guests: {place.maxGuests}
+              </div>
+            </div>
           </div>
           <div>
             <BookingWidget place={place} />
           </div>
         </div>
-        <div className="bg-white border-t -mx-8 mt-8 p-8">
+        <div className="border-t -mx-8 mt-8 p-8">
           <div>
             <h2 className="font-semibold text-xl">Extra info</h2>
           </div>
