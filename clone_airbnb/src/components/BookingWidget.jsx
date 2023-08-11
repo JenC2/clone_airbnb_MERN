@@ -1,12 +1,25 @@
+import { useState } from "react";
+import { differenceInCalendarDays } from "date-fns";
 
-export default function BookingWidget({place}) {
+export default function BookingWidget({ place }) {
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [numberOfGuests, setNumberOfGuests] = useState(1);
+
+  let numberOfNights = 0;
+  if (checkIn && checkOut) {
+    numberOfNights = differenceInCalendarDays(
+      new Date(checkOut),
+      new Date(checkIn)
+    );
+  }
 
   //toISOString() method converts the date into format "YYYY-MM-DDTHH:mm:ss.sssZ"
-  const currentDate = new Date().toISOString().split('T')[0];
+  const currentDate = new Date().toISOString().split("T")[0];
 
   const checkOutDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
     .toISOString()
-    .split('T')[0];
+    .split("T")[0];
 
   return (
     <div className="bg-white border border-gray-200 shadow-md shadow-gray-300 p-4 rounded-2xl">
@@ -17,21 +30,49 @@ export default function BookingWidget({place}) {
         <div className="flex">
           <div className="py-3 px-4">
             <label>CHECK-IN</label>
-            <input type="date" defaultValue={currentDate} />
+            <input
+              type="date"
+              value={checkIn}
+              onChange={(ev) => setCheckIn(ev.target.value)}
+            />
           </div>
           <div className="py-3 px-4 border-l">
             <label>CHECKOUT</label>
-            <input type="date" defaultValue={checkOutDate}/>
+            <input
+              type="date"
+              value={checkOut}
+              onChange={(ev) => setCheckOut(ev.target.value)}
+            />
           </div>
         </div>
         <div>
           <div className="py-3 px-4 border-t">
             <label>GUESTS</label>
-            <input type="number" value={1} />
+            <input
+              type="number"
+              value={numberOfGuests}
+              onChange={(ev) => setNumberOfGuests(ev.target.value)}
+            />
           </div>
         </div>
       </div>
       <button className="buttonRed">Reserve</button>
+      <div>
+        {numberOfNights > 0 && (
+          <div>
+            <div className="flex justify-between italic py-8 border-b">
+              <p className="border-b border-gray-400">
+                € {place.price} x {numberOfNights} nights
+              </p>
+              <p>€ {numberOfNights * place.price}</p>
+            </div>
+            <div className="flex justify-between py-5 text-lg font-semibold">
+              <p>Total</p>
+              <p>€ {numberOfNights * place.price}</p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
