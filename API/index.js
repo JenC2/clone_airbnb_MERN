@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User.js");
 const Place = require("./models/Place.js");
+const Booking = require("./models/Booking.js");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
 const multer = require("multer");
@@ -174,5 +175,23 @@ app.put("/places", async (req, res) => {
 app.get("/all_places", async (req, res) => {
   res.json(await Place.find());
 })
+
+app.post("/bookings", async (req, res) => {
+  const {
+    place, checkIn, checkOut, numberOfGuests, 
+    name, email, mobile, price} = req.body;
+    try {
+      const booking = await Booking.create({
+        place, checkIn, checkOut, numberOfGuests, 
+        name, email, mobile, price
+      });
+  
+      res.json(booking);
+    } catch (err) {
+      res.status(500).json({ error: "An error occurred while creating the booking." });
+      console.log(err);
+    }
+})
+
 
 app.listen(8000);
