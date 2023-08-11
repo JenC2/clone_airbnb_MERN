@@ -1,10 +1,16 @@
+import axios from "axios";
 import { useState } from "react";
 import { differenceInCalendarDays } from "date-fns";
+import { Navigate } from "react-router-dom";
 
 export default function BookingWidget({ place }) {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [numberOfGuests, setNumberOfGuests] = useState(1);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [redirect, setRedirect] = useState("");
 
   let numberOfNights = 0;
   if (checkIn && checkOut) {
@@ -14,12 +20,28 @@ export default function BookingWidget({ place }) {
     );
   }
 
-  //toISOString() method converts the date into format "YYYY-MM-DDTHH:mm:ss.sssZ"
-  const currentDate = new Date().toISOString().split("T")[0];
+  async function bookPlace() {
+    const data = {
+      checkIn, checkOut, numberOfGuests, name, mobile, email,
+      place:place._id,
+      price:numberOfNights * place.price,
+    };
+    const response = await axios.post("/bookings", data);
+    const bookingId = response.data._id;
+    setRedirect(`/account/bookings/${bookingId}`)
+  }
 
-  const checkOutDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0];
+  if (redirect) {
+    return <Navigate to={redirect} />
+  }
+
+
+  //toISOString() method converts the date into format "YYYY-MM-DDTHH:mm:ss.sssZ"
+  // const currentDate = new Date().toISOString().split("T")[0];
+
+  // const checkOutDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+  //   .toISOString()
+  //   .split("T")[0];
 
   return (
     <div className="bg-white border border-gray-200 shadow-md shadow-gray-300 p-4 rounded-2xl">
@@ -54,9 +76,31 @@ export default function BookingWidget({ place }) {
               onChange={(ev) => setNumberOfGuests(ev.target.value)}
             />
           </div>
+          {numberOfNights > 0 && (
+            <div className="py-3 px-4 border-t">
+              <label>Your full name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(ev) => setName(ev.target.value)}
+              />
+              <label>E-mail</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(ev) => setEmail(ev.target.value)}
+              />
+              <label>Phone number</label>
+              <input
+                type="tel"
+                value={mobile}
+                onChange={(ev) => setMobile(ev.target.value)}
+              />
+            </div>
+          )}
         </div>
       </div>
-      <button className="buttonRed">Reserve</button>
+      <button className="buttonRed" onClick={bookPlace}>Reserve</button>
       <div>
         {numberOfNights > 0 && (
           <div>
