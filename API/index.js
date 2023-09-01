@@ -30,6 +30,15 @@ app.use(
 // connect mongoose to mongoDB database
 mongoose.connect(process.env.MONGO_URL);
 
+function getUserDataFromReq(req) {
+  return new Promise((resolve, reject) => {    
+    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      resolve(userData);
+    });
+  });
+}
+
 app.get("/test", (req, res) => {
   res.json("test ok");
 });
@@ -174,16 +183,17 @@ app.put("/places", async (req, res) => {
 
 app.get("/all_places", async (req, res) => {
   res.json(await Place.find());
-})
+});
 
 app.post("/bookings", async (req, res) => {
+  const userData = await getUserDataFromReq(req);
   const {
     place, checkIn, checkOut, numberOfGuests, 
     name, email, mobile, price} = req.body;
     try {
       const booking = await Booking.create({
         place, checkIn, checkOut, numberOfGuests, 
-        name, email, mobile, price
+        name, email, mobile, price, user:userData.id,
       });
   
       res.json(booking);
@@ -191,7 +201,11 @@ app.post("/bookings", async (req, res) => {
       res.status(500).json({ error: "An error occurred while creating the booking." });
       console.log(err);
     }
-})
+});
 
+app.get("/bookings", async (req, res) => {
+  const userData = await getUserDataFromReq(req);
+  res.json( await Booking.find({user:userData.id}) );
+});
 
 app.listen(8000);
