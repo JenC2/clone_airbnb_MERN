@@ -37,9 +37,9 @@ export default function AccountPlacePage() {
           </Link>
         </div>
       </div>
-      <div className="mt-4">
+      <div className="mt-4 flex flex-wrap justify-center">
         {places.length > 0 && places.map(place => (
-          <Link to={"/account/places/"+place._id} className="flex items-center justif cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl">
+          <Link to={"/account/places/"+place._id} className="flex items-center cursor-pointer w-5/6 gap-4 bg-gray-100 p-4 m-2 rounded-2xl">
             <div className="flex w-32 h-32 bg-gray-200 shrink-0">
               {place.photos.length > 0 && (
                 <img className="object-cover w-full h-full" src={"http://localhost:8000/uploads/"+place.photos[0]} alt="photo of the place"/>
@@ -47,7 +47,7 @@ export default function AccountPlacePage() {
             </div>
             <div>
             <h2 className="text-xl">{place.title}</h2>
-            <p className="test-sm mt-2">{place.description}</p>
+            <p className="test-sm mt-2 line-clamp-3">{place.description}</p>
             </div>
           </Link>
         ))}
