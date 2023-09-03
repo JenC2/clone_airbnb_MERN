@@ -1,16 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import menuIcon from "../assets/svg/menuIcon.svg";
-import closeIcon from "../assets/svg/closeIcon.svg";
 import mapIcon from "../assets/svg/mapIcon.svg";
 import BookingWidget from "../components/BookingWidget";
 import DisplayFeatures from "../components/DisplayFeatures";
+import PhotoGallery from "../components/PhotoGallery";
 
 export default function PlacePage() {
   const { id } = useParams();
   const [place, setPlace] = useState(null);
-  const [showMorePhotos, setShowMorePhotos] = useState(false);
 
   // we put id as dependency, so each the id changed, the useEffect will run again
   useEffect(() => {
@@ -24,34 +22,7 @@ export default function PlacePage() {
 
   if (!place) return "";
 
-  if (showMorePhotos) {
-    return (
-      <div className="absolute inset-0 bg-black min-h-screen">
-        <div className="bg-black p-8 grid gap-4">
-          <div>
-            <button
-              onClick={() => setShowMorePhotos(false)}
-              className=" bg-gray-200 flex items-center gap-2 py-2 px-4 rounded-2xl shadow shadow-gray-500"
-            >
-              <img src={closeIcon} alt="close" className="w-5 h-5" />
-              Close
-            </button>
-          </div>
-          {place.photos.length > 0
-            ? place.photos.map((photo) => (
-                <div className="flex justify-center">
-                  <img
-                    className="w-2/3 h-full"
-                    src={"http://localhost:8000/uploads/" + photo}
-                    alt="photos"
-                  />
-                </div>
-              ))
-            : null}
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="w-full h-full flex justify-center">
@@ -66,42 +37,7 @@ export default function PlacePage() {
           <img src={mapIcon} alt="mapIcon" className="w-4 h-4" />
           {place.address}
         </a>
-        <div className="relative">
-          <div
-            onClick={() => setShowMorePhotos(true)}
-            className="cursor-pointer grid gap-2 grid-cols-4 grid-row-2 rounded-2xl overflow-hidden"
-          >
-            {place.photos.length > 0 && (
-              <div className="col-span-2 row-span-2">
-                <img
-                  className="aspect-[4/3] object-cover"
-                  src={"http://localhost:8000/uploads/" + place.photos[0]}
-                  alt=""
-                />
-              </div>
-            )}
-            {place.photos.slice(1, 5).map((photo, index) => (
-              <div>
-                {photo && (
-                  <img
-                    className="aspect-[4/3] object-cover"
-                    src={"http://localhost:8000/uploads/" + photo}
-                    alt={`Photo ${index + 1}`}
-                  />
-                )}
-              </div>
-            ))}
-            <button
-              onClick={() => setShowMorePhotos(true)}
-              className="flex absolute bottom-2 right-2 py-1 px-3 bg-white rounded-xl border border-black"
-            >
-              <div className="flex items-center gap-1">
-                <img src={menuIcon} alt="menu" className="w-4 h-4" />
-                <p>show more photos</p>
-              </div>
-            </button>
-          </div>
-        </div>
+        <PhotoGallery place={place} />
         <div className="mt-8 grid gap-8 gird-cols-1 md:grid-cols-[2fr_1fr]">
           <div>
             <div className="my-4">
