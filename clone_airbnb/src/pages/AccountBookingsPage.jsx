@@ -5,12 +5,9 @@ import axios from "axios";
 import userBlackLineIcon from "../assets/svg/userBlackLineIcon.svg";
 import bookingWhiteIcon from "../assets/svg/bookingWhiteIcon.svg";
 import buildingIcon from "../assets/svg/buildingIcon.svg";
-import calendarIcon from "../assets/svg/calendarIcon.svg";
-import nightIcon from "../assets/svg/nightIcon.svg";
 import creditIcon from "../assets/svg/creditIcon.svg";
 import PlaceImg from "../components/PlaceImg";
-import { format } from "date-fns";
-import { differenceInCalendarDays } from "date-fns";
+import BookingDates from "../components/BookingDates";
 
 export default function AccountBookingsPage() {
   const { ready, user } = useContext(UserContext);
@@ -66,31 +63,7 @@ export default function AccountBookingsPage() {
               <div className="py-3 pr-3 grow">
                 <h2 className="text-xl">{booking.place.title}</h2>
                 <div className="flex gap-3 border-t border-gray-300 mt-2 py-2">
-                  <div className="flex gap-1 items-center my-2">
-                    <img src={nightIcon} alt="nightIcon" className="w-5 h-5" />
-                    {differenceInCalendarDays(
-                      new Date(booking.checkOut),
-                      new Date(booking.checkIn)
-                    )}{" "}
-                    nights :
-                    <div className="flex gap-1 items-center ml-2">
-                      <img
-                        src={calendarIcon}
-                        alt="calendarIcon"
-                        className="w-5 h-5"
-                      />
-                      {format(new Date(booking.checkIn), "dd-MM-yyyy")}
-                    </div>
-                    &rarr;
-                    <div className="flex gap-1 items-center">
-                      <img
-                        src={calendarIcon}
-                        alt="calendarIcon"
-                        className="w-5 h-5"
-                      />
-                      {format(new Date(booking.checkOut), "dd-MM-yyyy")}
-                    </div>
-                  </div>
+                <BookingDates booking={booking} />
                 </div>
                 <div>
                   <div className="flex gap-1 items-center">
