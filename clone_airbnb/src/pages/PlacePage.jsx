@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import mapIcon from "../assets/svg/mapIcon.svg";
 import BookingWidget from "../components/BookingWidget";
 import DisplayFeatures from "../components/DisplayFeatures";
 import PhotoGallery from "../components/PhotoGallery";
+import AddressLink from "../components/AddressLink";
 
 export default function PlacePage() {
   const { id } = useParams();
@@ -28,15 +28,7 @@ export default function PlacePage() {
     <div className="w-full h-full flex justify-center">
       <div className="mt-8 w-4/5">
         <h1 className="text-3xl">{place.title}</h1>
-        {/* <a>tag is a inline-level elemant, so we add block to make it a block-level element */}
-        <a
-          className="flex gap-1 my-3 items-center font-semibold underline"
-          target="_blank"
-          href={"https://maps.google.com/?q=" + place.address}
-        >
-          <img src={mapIcon} alt="mapIcon" className="w-4 h-4" />
-          {place.address}
-        </a>
+        <AddressLink>{place.address}</AddressLink>
         <PhotoGallery place={place} />
         <div className="mt-8 grid gap-8 gird-cols-1 md:grid-cols-[2fr_1fr]">
           <div>
